@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,12 +50,12 @@ public class AuthController {
         String token = this.helper.generateToken(userDetails);
         JwtResponse response = JwtResponse.builder()
                 .jwtToken(token)
-                .username(userDetails.getUsername()).build();
+                .email(userDetails.getUsername()).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private void doAuthenticate(String username, String password) {
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
+    private void doAuthenticate(String email, String password) {
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
         try {
             // Попытка аутентификации
             manager.authenticate(authentication);
@@ -64,33 +63,5 @@ public class AuthController {
             // В случае неудачи выбрасываем исключение с сообщением об ошибке
             throw new BadCredentialsException("Invalid Username or Password!!");
         }
-    }
-
-    @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserEntity> usersEntities = userService.getAll();
-        List<UserDto> userDtos = usersEntities.stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(userDtos);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
-        UserDto user = UserMapper.toDto(userService.getOne(id));
-        return ResponseEntity.ok(user);
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable String id, @RequestBody UserDto userDto) {
-        UserEntity updateEntity = UserMapper.toEntity(userDto);
-        UserDto updatedUser = UserMapper.toDto(userService.update(id, updateEntity));
-        return ResponseEntity.ok(updatedUser);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }
