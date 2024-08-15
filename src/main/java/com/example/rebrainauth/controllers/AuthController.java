@@ -32,11 +32,10 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> registration(@RequestBody UserDto userDto) {
+    public ResponseEntity<Void> registration(@RequestBody UserDto userDto) {
         UserEntity userEntity = UserMapper.toEntity(userDto);
-        UserEntity createdUser = userService.create(userEntity);
-        UserDto createdToDto = UserMapper.toDto(createdUser);
-        return ResponseEntity.ok(createdToDto.getEmail());
+        userService.create(userEntity);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
