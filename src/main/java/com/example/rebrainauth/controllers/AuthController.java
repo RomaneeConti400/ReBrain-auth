@@ -1,7 +1,6 @@
 package com.example.rebrainauth.controllers;
 
-import com.example.rebrainauth.dto.JwtRequest;
-import com.example.rebrainauth.dto.JwtResponse;
+import com.example.rebrainauth.dto.LoginDto;
 import com.example.rebrainauth.dto.UserDto;
 import com.example.rebrainauth.entity.UserEntity;
 import com.example.rebrainauth.mappers.UserMapper;
@@ -15,9 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -43,11 +39,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
+    public ResponseEntity<LoginDto> login(@RequestBody UserDto request) {
         this.doAuthenticate(request.getEmail(), request.getPassword());
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String token = this.helper.generateToken(userDetails);
-        JwtResponse response = JwtResponse.builder()
+        LoginDto response = LoginDto.builder()
                 .jwtToken(token)
                 .email(userDetails.getUsername()).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
