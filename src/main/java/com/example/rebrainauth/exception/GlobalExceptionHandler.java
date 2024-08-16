@@ -2,6 +2,7 @@ package com.example.rebrainauth.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,13 +33,11 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
     }
 
-    @ExceptionHandler(value = InvalidCredentialsException.class)
+    @ExceptionHandler(value = BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public @ResponseBody ErrorResponse handleInvalidCredentialsException(InvalidCredentialsException ex) {
-        log.error("InvalidCredentialsException: {}", ex.getMessage());
-        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
+    public @ResponseBody ErrorResponse handleBadCredentialsException(BadCredentialsException ex) {
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid username or password.");
     }
-
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public @ResponseBody ErrorResponse handleGenericException(Exception ex) {

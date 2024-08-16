@@ -3,8 +3,6 @@ package com.example.rebrainauth.controllers;
 import com.example.rebrainauth.dto.LoginDto;
 import com.example.rebrainauth.dto.UserDto;
 import com.example.rebrainauth.entity.UserEntity;
-import com.example.rebrainauth.exception.InvalidCredentialsException;
-import com.example.rebrainauth.exception.ObjectNotFoundException;
 import com.example.rebrainauth.mappers.UserMapper;
 import com.example.rebrainauth.security.CustomUserDetailsService;
 import com.example.rebrainauth.security.JwtHelper;
@@ -55,8 +53,8 @@ public class AuthController {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
         try {
             manager.authenticate(authentication);
-        } catch (BadCredentialsException  e) {
-            throw new InvalidCredentialsException("Invalid Username or Password!!");
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid Username or Password!!");
         }
     }
 }
